@@ -1,15 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
-using UnityEngine.SceneManagement;
 using UnityEditor.SceneManagement;
 using System.Text;
-using UnityEditor.SearchService;
 using System.IO;
-using UnityEngine.UI;
-using System;
 
 
 [ExecuteInEditMode]
@@ -17,12 +12,13 @@ public class SceneReporter
 {
     static SceneReporter()
     {
-        Debug.Log("Creating report on startup");
-        CreateReport();
+        Debug.Log("[USC] Creating report on startup");
+        //CreateReport();
     }
 
     public static void CreateReport()
     {
+        Debug.Log("[USC] Creating report on executeMethod");
         var projectPath = Directory.GetParent(Application.dataPath);
         var buildScenes = EditorBuildSettings.scenes;
         var report = new StringBuilder();
@@ -33,15 +29,19 @@ public class SceneReporter
 
         foreach (var scene in buildScenes)
         {
+            Debug.Log("[USC] Scene " + scene.path.Replace("/", "\\"));
             UnityEngine.SceneManagement.Scene openedScene = EditorSceneManager.OpenScene(scene.path, OpenSceneMode.Single);
             report.Append($"<h2>[Scene {sceneBuildIndex}] {scene.path.Replace("/", "\\")}</h2>");
             var rootGos = openedScene.GetRootGameObjects().ToList();
             RecursiveListGOs(rootGos, report);
             EditorSceneManager.CloseScene(openedScene, false);
+            sceneBuildIndex++;
         }
         report.Append("</body>\r\n</html>");
         Debug.Log(report.ToString());
-        File.WriteAllText(Path.Combine(Application.dataPath, "scenes-report.html"), report.ToString());
+        string htmlPath = Path.Combine(Application.dataPath, "scenes-report.html");
+        Debug.Log("[USC] Report created. Saving HTML file : " + htmlPath);
+        File.WriteAllText(htmlPath, report.ToString());
     }
 
     public static void RecursiveListGOs(List<GameObject> gos, StringBuilder report)

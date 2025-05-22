@@ -72,3 +72,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 repo-list-v1.txt
 /private_tests
+log-import.txt
+log-report.txt
+log.txt
+log.txt
